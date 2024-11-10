@@ -2,7 +2,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 <style>
   body {
     margin: 0;
