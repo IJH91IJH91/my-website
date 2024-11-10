@@ -1,17 +1,637 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My One-Page Site</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Optional CSS file -->
-</head>
-<body>
-    <h1>Welcome to My One-Page Site</h1>
-    <p>This is a simple one-page site hosted on GitHub Pages.</p>
 
-    <!-- Link to your JavaScript file -->
-    <script src="script.js"></script>
+<style>
+  body {
+    margin: 0;
+    padding: 20px;
+    /* background-color: #0f1116; */
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    min-height: 100vh;
+    margin-top: 35px;
+    background: linear-gradient(45deg, #20001e, #001724);/* 45deg=diagonal */
+    height: 100vh; /* Ensures it covers the full viewport height */
+  }
+
+  .container {
+    max-height: 90%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 18px;
+    max-width: 1050px;
+    margin: 0 auto;
+  }
+
+  .box {
+    /* background: #16181a; */
+    background: linear-gradient(45deg, #00273e7b, #36003378);/* 45deg=diagonal */
+    border-radius: 15px;
+    padding: 25px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    min-height: 200px;
+    position: relative;
+    overflow-y: hidden; /* This ADDs the Scrollbar*/  
+    /* overflow: hidden; /* This REMOVES the Scrollbar*/  
+  }
+
+  .box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(18, 17, 17, 0.2);
+  }
+
+  .box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+  }
+
+  .box:nth-child(1)::before { background: #ff0040ad; }
+  .box:nth-child(2)::before { background: #00ff55ad; }
+  .box:nth-child(3)::before { background: #8636ffad; }
+  .box:nth-child(4)::before { background: #ffd426ad; }
+  .box:nth-child(5)::before { background: #ff0095ad; }
+  .box:nth-child(6)::before { background: #00e5ffad; }
+  .box:nth-child(7)::before { background: #00ff77ad; }
+  .box:nth-child(8)::before { background: #001affad; }
+  .box:nth-child(9)::before { background: #ff9100ad; }
+
+  .box h2 {
+    margin: 0 0 14px 0;
+    font-size: 1.4em;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .box p {
+    margin: 0;
+    color: #8b8b8b;
+    line-height: 1.6;
+    overflow-y: auto;
+    max-height: 200px ;
+  }
+
+  .date {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  /* New styles for editable notepad */
+  .notepad {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 50px);
+  }
+
+  .notepad-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .save-status {
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  .editor {
+    flex-grow: 1;
+    background: #242830;
+    border: none;
+    border-radius: 8px;
+    padding: 15px;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    resize: none;
+    outline: none;
+    font-size: 0.9em;
+    line-height: 1.6;
+  }
+
+  .editor::placeholder {
+    color: #666;
+  }
+
+  .save-btn {
+    background: #f20c7bd9;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    padding: 5px 15px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background 0.3s ease;
+}
+
+.save-btn:hover {
+    background: #870d3c;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.task-input {
+    flex: 1;
+    background: #242830;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    padding: 8px 12px;
+    color: #fff;
+    font-size: 0.9em;
+    outline: none;
+}
+
+.add-btn {
+    background: #6B5FFF;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background 0.3s ease;
+}
+
+.add-btn:hover {
+    background: #5346ff;
+}
+
+.task-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.task-list li {
+    background: #242830;
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    color: #ff3366;
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.box.dragging {
+    opacity: 0.5;
+    border: 2px dashed #FF3366;
+}
+
+.box {
+    cursor: default; /* Reset cursor for box */
+    
+}
+
+.box h2 {
+    cursor: move; /* Show grab cursor only on title */
+}
+
+/* Style for the top navigation bar */
+.top-bar {
+    /* background-color: #333;  /* Dark background color */
+    background: linear-gradient(45deg, #004369bd, #53004fc2);/* 45deg=diagonal */
+    color: white;  /* Text color */
+    position: fixed;  /* Make the bar fixed at the top */
+    top: 0;
+    left: 0;
+    width: 100%;  /* Full width */
+    z-index: 1000;  /* Ensure the bar is above other content */
+    padding: 10px 0;
+}
+
+/* Style for the unordered list inside the top bar */
+.top-bar ul {
+    list-style-type: none;  /* Remove bullet points */
+    display: flex;  /* Display links in a row */
+    justify-content: center;  /* Center the links */
+    padding: 0;
+    margin: 0;
+}
+
+/* Style for each list item in the top bar */
+.top-bar ul li {
+    margin: 0 20px;  /* Space out the links */
+}
+
+/* Style for the links */
+.top-bar ul li a {
+    text-decoration: none;  /* Remove underlines */
+    color: white;  /* Link color */
+    font-size: 16px;
+    transition: color 0.3s;  /* Smooth transition for hover effect */
+}
+
+/* Hover effect for the links */
+.top-bar ul li a:hover {
+    color: #ff6600;  /* Change color on hover */
+}
+
+/* Style the scrollbar itself */
+::-webkit-scrollbar {
+    width: 12px;  /* Set the width of the vertical scrollbar */
+    /* height: 12px; /* Set the height of the horizontal scrollbar */
+
+}
+
+/* Style the track (the part the scrollbar moves along) */
+::-webkit-scrollbar-track {
+    background: #2b2b2b;  /* Light gray background */
+    border-radius: 10px;   /* Rounded corners for the track */
+}
+
+/* Style the thumb (the draggable part of the scrollbar) */
+::-webkit-scrollbar-thumb {
+    background-image: linear-gradient(180deg, #8b004c 0%, #17558f 99%);
+    box-shadow: inset 2px 2px 5px 0 rgba(#000000, 0.5);
+    border-radius: 10px;    /* Rounded corners for the thumb */
+    border: 2px solid #000000;  /* Optional: border for contrast */
+}
+
+/* Style the thumb when it's hovered */
+::-webkit-scrollbar-thumb:hover {
+   
+    background-image: linear-gradient(180deg, #430527 0%, #0f3355 99%);
+}
+
+/* Optional: Style the scrollbar corner (for when both horizontal and vertical scrollbars appear) */
+::-webkit-scrollbar-corner {
+    background: #ff0000;  /* Corner background color */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+  @media (max-width: 768px) {
+    .container {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .container {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+</head>
+
+<body>
+  
+    <!-- NAV DIV -->
+    <nav class="top-bar">
+        <ul>
+            <li><a href="https://www.example1.com" target="_blank">GPT</a></li>
+            <li><a href="https://www.example2.com" target="_blank">Claude </a></li>
+            <li><a href="https://www.example3.com" target="_blank">YT</a></li>
+            <li><a href="https://www.example4.com" target="_blank">GitHub </a></li>
+            <li><a href="https://www.example5.com" target="_blank">Reddit </a></li>
+            <li><a href="https://www.example5.com" target="_blank">Google </a></li>
+            <li><a href="https://www.example5.com" target="_blank">DuckDuckGo</a></li>
+            <li><a href="https://www.example5.com" target="_blank">Barclays </a></li>
+            <li><a href="https://www.example5.com" target="_blank">GMAIL </a></li>
+            <li><a href="https://www.example5.com" target="_blank">PayPal </a></li>
+            <li><a href="https://www.example5.com" target="_blank">Barclays </a></li>
+            <li><a href="https://www.example5.com" target="_blank">PaidTabs </a></li>
+            
+             
+            
+            <!-- GMX Proton.me iCloud Mail.com
+            UG, MOISES, TFT 
+            -->
+        </ul>
+    </nav>
+  
+  
+  
+  
+  
+    <div class="container" id="container">
+
+    <!-- TRANS DIV -->
+    <div class="box">
+        <h2 draggable="true">YT Transcribers:</h2> 
+        <p>
+        -  <br>
+        -  <br>
+        -  <br> 
+        -  <br>
+
+
+      </p>
+      <span class="date">Yesterday</span>
+    </div>
+    
+    <!-- VENDORS DIV -->
+    <div class="box">
+        <h2 draggable="true">Tab Vendors:</h2>
+      <p> - https://www.sheetmusicdirect.com/ <br>
+        - https://paidtabs.com/ <br>
+        - https://www.mymusicsheet.com/  <br>
+        - https://www.kokomu.jp/ <br>     
+        - UG? Muse? <br>
+        - ko fi? shopify? JP? KR? CHINA ?<br>
+
+    </p>
+      <span class="date">2 days ago</span>
+    </div>
+    
+    <!-- Guitarists DIV  -->
+    <div class="box">
+        <h2 draggable="true">Pop. Guitarists</h2>
+      <p> - Tim Henson <BR>
+        - Daijiro Nakagawa<BR>
+        - Yvette Young<BR>
+        - Ichika Nito, Manuel Gardner Fernandes<BR>
+        - Bearclaw?<BR>
+        - Plini, Mateus Asato, Rabea Massaad, Sungah Jung<BR>
+        - Mike Dawes, Jon Gomm <BR>
+        - Chan Kim<BR>- Chan Kim<BR>- Chan Kim<BR>- Chan Kim<BR>- Chan Kim<BR>
+            Chan Kim<BR>- Chan Kim<BR>- Chan Kim<BR>- Chan Kim<BR>- Chan Kim<BR>
+                Chan Kim<BR>- Chan Kim<BR>- Chan Kim<BR>- Chan Kim<BR>- Chan Kim<BR>
+        - T-Cophony? Marcin Patrzalek? Alexandr Misko? 
+      </p>
+      <span class="date">Last week</span>
+    </div>
+    
+    <!-- Bass Tabs DIV  -->
+    <div class="box">
+        <h2 draggable="true">Bass Tabs</h2>
+      <p> good charlotte bass <BR>
+        sum41 bass<BR>
+        foo fighters bass<BR>
+        rchp<BR>
+        the used<BR>
+        fftl</p>
+      <span class="date">Last week</span>
+    </div>
+    
+    <!-- DEV list DIV -->
+    <div class="box">
+        <h2 draggable="true">Dev These:</h2>
+      <p>
+        <b>App/Site:</b> Japanese Mathrock Chords/Scale Generator<br>
+        <b>App/Site:</b> CHON Mathrock Chords/Scale Generator<br>
+        <b>ChromeExt.:</b> YT CSS edit <br>
+        <b>ChromeExt.:</b> YT custom VolumeBar <br>
+        <b>ChromeExt.:</b> YT ad skip, block, sponder-div remover <br>
+        <b>ChromeExt.:</b> UG div remover <br>
+        <b>ChromeExt.:</b> Reddit div remgit push -u origin mainover  <br>
+        <b>Bot:</b> Scrape YT Transcribers -> List of recent Videos. <br>
+        <b>Bot:</b> Scrape Pop. Guitarists -> List of Videos. <br>
+        <b>Bot:</b> Scrape YT & Spotify -> List of NEW MathRock Songs<br>
+        <br>
+        - my Multi-VLC (w/ EQ & Vol) <br>
+        - my Audio -> Midi / mXML <br>
+        - character custimistion creator?<br>
+        - make own HIIT Timer(random gen workouts & add and remove tags (legs, abs, bad knees, bad wrists, carido etc)
+      </p>
+      <span class="date">2 weeks ago</span>
+    </div> 
+    <!-- Notepad DIV -->
+    <div class="box">
+      <div class="notepad">
+        <div class="notepad-header">
+            <h2 draggable="true">Quick Notes</h2>
+        <p>
+          <button id="saveButton" class="save-btn">Save</button>
+          <span class="save-status" id="saveStatus">Saved</span>
+        </div>
+        <textarea class="editor" id="notepadEditor" placeholder="Start typing your notes here..."></textarea></p>
+      </div>
+    </div>
+
+    <!--MATHROCK TABS DIV -->
+    <div class="box">
+        <h2 draggable="true">MathRock Tabs:</h2>
+        <p>Covet  <br>
+            Via Luna <br>
+            Tim Henson / Polyphia <br>
+            CHON <br>
+            Daijiro Nakagawa <br>
+            Jyocho<br>
+            Uchu Conbini<br>
+            Jyocho<br>
+
+        </p>
+        <span class="date">2 weeks ago</span>
+      </div>
+
+
+
+    <!-- ACCOUNTS THIS DIV  -->
+    <div class="box">
+        <h2 draggable="true">Accounts</h2>
+        <p>        <b>PaidTabs Accounts:</b> <br>
+        - Ambroxiak.Music@gmail.com <!-- a6 -->  <br>
+        - JamesRobsonMusic@yahoo.com  <!-- MusicalFarting1966 -->  <br>
+        - IJH <br>
+        - <s>Akira</s> <br>
+
+    <b>YT Channels:</b> <br>
+        - IJH  <br>
+        - MathRock Riffs  <br>
+
+    <b>Emails:</b> <br>
+        - ianjunhep91@gmx.co.uk     <br>
+        - ianjunhep@gmail.com       <br>
+        - Ambroxiak.Music@gmail.com  <br>
+        - JamesRobsonMusic@yahoo.com  <br>
+        - JamesRobsonMusic@yahoo.com  <br>
+        
+        </p>
+        <span class="date">high on meth</span>
+      </div>
+
+
+        <!-- LIST DIV -->
+        <div class="box">
+            <h2 draggable="true">To Do List / Ideas:</h2>
+            <div class="input-group">
+                <input type="text" id="taskInput" class="task-input" placeholder="Add new task...">
+                <button id="addTaskButton" class="add-btn">Add</button>
+            </div>
+            <p><ul id="taskList" class="task-list"></ul></p>
+        </div>
+
+</div>
+
+  <script>
+    const editor = document.getElementById('notepadEditor');
+    const saveButton = document.getElementById('saveButton');
+    const taskInput = document.getElementById('taskInput');
+    const addTaskButton = document.getElementById('addTaskButton');
+    const taskList = document.getElementById('taskList');
+    const boxes = document.querySelectorAll('.box');
+    const container = document.querySelector('.container');
+
+    const saveStatus = document.getElementById('saveStatus');
+    let saveTimeout;
+
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    renderTasks();
+
+    // Load saved content
+    editor.value = localStorage.getItem('notepadContent') || '';
+    
+    // Replace your current drag handling code with this:
+    boxes.forEach(box => {
+        const title = box.querySelector('h2');
+        
+        // Make only the title draggable
+        title.draggable = true;
+        
+        // Add drag start event to title
+        title.addEventListener('dragstart', (e) => {
+            // Set the dragging class on the parent box
+            box.classList.add('dragging');
+        });
+
+        // Add drag end event to title
+        title.addEventListener('dragend', (e) => {
+            box.classList.remove('dragging');
+        });
+    });
+
+    // Add dragover event to container
+    container.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        const draggingBox = document.querySelector('.dragging');
+        const boxes = [...container.querySelectorAll('.box:not(.dragging)')];
+        
+        const nextBox = boxes.find(box => {
+            const rect = box.getBoundingClientRect();
+            const boxCenter = rect.top + rect.height / 2;
+            return e.clientY < boxCenter;
+        });
+        
+        if (nextBox) {
+            container.insertBefore(draggingBox, nextBox);
+        } else {
+            container.appendChild(draggingBox);
+        }
+    });
+
+    // Save Button Listening
+    saveButton.addEventListener('click', () => {
+    localStorage.setItem('notepadContent', editor.value);
+    saveStatus.textContent = 'Saved';
+    });
+
+    // Auto-save functionality
+    editor.addEventListener('input', () => {
+      saveStatus.textContent = 'Saving...';
+      
+      // Clear previous timeout
+      clearTimeout(saveTimeout);
+      
+      // Set new timeout for saving
+      saveTimeout = setTimeout(() => {
+        localStorage.setItem('notepadContent', editor.value);
+        saveStatus.textContent = 'Saved';
+      }, 1000);
+    });
+  
+    // Event listeners
+    addTaskButton.addEventListener('click', addTask);
+    taskInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            addTask();
+        }
+    });
+
+    // Save box positions to localStorage
+
+    // container.addEventListener('dragend', () => {
+    //     const boxOrder = [...container.children].map(box => box.querySelector('h2').textContent);
+    //     localStorage.setItem('boxOrder', JSON.stringify(boxOrder));
+    // });
+
+    // Add minimize/maximize functionality to boxes
+    
+    //function addBoxControls() {
+    //    boxes.forEach(box => {
+    //        const controls = document.createElement('div');
+    //        controls.innerHTML = `
+    //            <button class="minimize">-</button>
+    //            <button class="maximize">□</button>
+    //        `;
+    //        box.querySelector('h2').appendChild(controls);
+    //    });
+    //}
+
+
+
+    // Add task function
+    function addTask() {
+        const taskText = taskInput.value.trim();
+        if (taskText) {
+            tasks.push(taskText);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            taskInput.value = '';
+            renderTasks();
+        }
+    }
+
+    // Render tasks function
+    function renderTasks() {
+        taskList.innerHTML = '';
+        tasks.forEach((task, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                ${task}
+                <button class="delete-btn" onclick="deleteTask(${index})">×</button>
+            `;
+            taskList.appendChild(li);
+        });
+    }
+
+    // Delete task function
+    function deleteTask(index) {
+        tasks.splice(index, 1);
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        renderTasks();
+    }
+
+    // On Load RANDOMISE the DIVs Order
+    //window.onload = function() {
+    //        const container = document.getElementById('container');
+    //        const boxes = Array.from(container.children);
+    //        const shuffledBoxes = boxes.sort(() => Math.random() - 0.5);
+
+            // Append the boxes in the shuffled order
+    //        shuffledBoxes.forEach(box => container.appendChild(box));
+    //    };
+  
+  </script>
+  <script src="script.js"></script>
 </body>
 </html>
